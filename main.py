@@ -14,7 +14,7 @@ clock = pg.time.Clock()
 screen = pg.display.set_mode((WIDTH,HEIGHT))
 pg.display.set_caption('Car Game')
 
-background = pg.transform.scale(pg.image.load('background.png'),(WIDTH,HEIGHT))
+background = pg.transform.scale(pg.image.load('background.jpg'),(WIDTH,HEIGHT))
 
 
 class Sprite(pg.sprite.Sprite):
@@ -47,11 +47,28 @@ class Obstacle(Sprite):
             self.rect.x = random.randrange(75, 425)
             self.rect.bottom = 0
         self.rect.y+=self.speed
+class Line(Sprite):
+    def __init__(self,x,y,size,filename,speed):
+        Sprite.__init__(self,x,y,size,filename)
+        self.image = pg.image.load(filename)
+        # self.image.set_colorkey(self.image.get_at((0,0)))
+        self.rect = self.image.get_rect(center=(x, y))
+        self.speed = speed
     
+    def update(self):
+        if self.rect.top > 375:
+            self.rect.bottom = 0
+        self.rect.y+=self.speed
+
 car = Car(200,250,60,'car2.png')  
+  
+
 obs1 = Obstacle(200,0,50,35,'obs1.png',3)
 obs1.image = pg.transform.rotate(obs1.image,90)
 
+lines = pg.sprite.Group()
+lines.add(Line(172,25,1,'line.png',3),Line(172,125,1,'line.png',3),Line(172,225,1,'line.png',3),Line(172,325,1,'line.png',3),
+          Line(328,25,1,'line.png',3),Line(328,125,1,'line.png',3),Line(328,225,1,'line.png',3), Line(328,325,1,'line.png',3) )
 
 running = True
 while running:
@@ -74,10 +91,16 @@ while running:
                 car.speed = 0
     
     car.rect.x += car.speed
+
     obs1.update()
+    lines.update()
 
     screen.blit(background, (0,0))
+
+    lines.draw(screen)
+
     screen.blit(car.image, car.rect)
+
     screen.blit(obs1.image, obs1.rect)
 
 
