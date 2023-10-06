@@ -9,7 +9,7 @@ pg.init()
 WIDTH = 500
 HEIGHT = 300
 SPEED = 0
-SCORE = 10 
+SCORE = 5 
 clock = pg.time.Clock()
 screen = pg.display.set_mode((WIDTH,HEIGHT))
 pg.display.set_caption('Car Game')
@@ -54,6 +54,11 @@ class Obstacle(Sprite):
             self.rect.x = random.randrange(75, 425)
             self.rect.bottom = 0
         self.rect.y+=self.speed
+    def score(self):
+        global SCORE
+        if self.rect.top > HEIGHT:
+            SCORE -= 1
+        # self.rect.y+=self.speed 
 class Line(Sprite):
     def __init__(self,x,y,size,filename,speed):
         Sprite.__init__(self,x,y,size,filename)
@@ -68,7 +73,7 @@ class Line(Sprite):
         self.rect.y+=self.speed
 
 car = Car(200,250,60,'car2.png')  
-  
+fuel = Obstacle(100,0,30,30,'fuel.png',4)
 
 obs1 = Obstacle(200,0,50,35,'obs1.png',3)
 obs1.image = pg.transform.rotate(obs1.image,90)
@@ -78,7 +83,7 @@ lines.add(Line(172,25,1,'line.png',2),Line(172,125,1,'line.png',2),Line(172,225,
           Line(328,25,1,'line.png',2),Line(328,125,1,'line.png',2),Line(328,225,1,'line.png',2), Line(328,325,1,'line.png',2) )
 
 running = True
-while running:
+while SCORE>0:
     if car.rect.left <= 70:
         car.rect.left = 70
     if car.rect.right >= 430:
@@ -96,10 +101,19 @@ while running:
         elif event.type == pg.KEYUP:
             if event.key in [pg.K_RIGHT, pg.K_LEFT]:
                 car.speed = 0
+    if pg.sprite.collide_rect(car,fuel):
+        SCORE+=1
+        fuel.rect.bottom = -20
+        fuel.rect.x = random.randrange(75, 425)
+    if pg.sprite.collide_rect(car,obs1):
+        SCORE = -10
+        
     
     car.rect.x += car.speed
 
     obs1.update()
+    fuel.update()
+    fuel.score()
     lines.update()
 
     screen.blit(background, (0,0))
@@ -109,6 +123,7 @@ while running:
     screen.blit(car.image, car.rect)
 
     screen.blit(obs1.image, obs1.rect)
+    screen.blit(fuel.image, fuel.rect)
     font()
 
     pg.display.update()
