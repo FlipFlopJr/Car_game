@@ -9,7 +9,7 @@ pg.init()
 WIDTH = 500
 HEIGHT = 300
 SPEED = 0
-SCORE = 0 
+SCORE = 10 
 clock = pg.time.Clock()
 screen = pg.display.set_mode((WIDTH,HEIGHT))
 pg.display.set_caption('Car Game')
@@ -17,6 +17,13 @@ pg.display.set_caption('Car Game')
 background = pg.transform.scale(pg.image.load('background.jpg'),(WIDTH,HEIGHT))
 
 
+def font():
+    font = pg.font.SysFont(None,32)
+    text = font.render(f'{SCORE}',True,(0,0,0))
+    text_rect = text.get_rect(center = (45,150))
+    heart = Sprite(45,110,30,'heart.png')
+    screen.blit(text,text_rect)
+    screen.blit(heart.image, heart.rect)
 class Sprite(pg.sprite.Sprite):
     def __init__(self, x, y, size, filename):
         pg.sprite.Sprite.__init__(self)
@@ -67,8 +74,8 @@ obs1 = Obstacle(200,0,50,35,'obs1.png',3)
 obs1.image = pg.transform.rotate(obs1.image,90)
 
 lines = pg.sprite.Group()
-lines.add(Line(172,25,1,'line.png',3),Line(172,125,1,'line.png',3),Line(172,225,1,'line.png',3),Line(172,325,1,'line.png',3),
-          Line(328,25,1,'line.png',3),Line(328,125,1,'line.png',3),Line(328,225,1,'line.png',3), Line(328,325,1,'line.png',3) )
+lines.add(Line(172,25,1,'line.png',2),Line(172,125,1,'line.png',2),Line(172,225,1,'line.png',2),Line(172,325,1,'line.png',2),
+          Line(328,25,1,'line.png',2),Line(328,125,1,'line.png',2),Line(328,225,1,'line.png',2), Line(328,325,1,'line.png',2) )
 
 running = True
 while running:
@@ -102,7 +109,7 @@ while running:
     screen.blit(car.image, car.rect)
 
     screen.blit(obs1.image, obs1.rect)
-
+    font()
 
     pg.display.update()
     clock.tick(60)
